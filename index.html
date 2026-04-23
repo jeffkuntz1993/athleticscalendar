@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Athletics Calendar</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f8f9fa; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; }
+        
+        /* Filter Section */
+        #filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; padding: 15px; border-bottom: 1px solid #eee; }
+        .filter-item { display: flex; align-items: center; background: #e9ecef; padding: 5px 10px; border-radius: 20px; font-size: 0.9em; cursor: pointer; transition: 0.2s; }
+        .filter-item:hover { background: #dee2e6; }
+        .filter-item input { margin-right: 8px; }
+
+        /* Buttons */
+        .controls { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .print-btn { background-color: #6c757d; color: white; }
+        .export-btn { background-color: #28a745; color: white; }
+
+        /* Calendar Styling */
+        #calendar { margin-top: 20px; }
+        .fc-event { cursor: pointer; }
+
+        @media print {
+            #filters, .controls { display: none; }
+            .container { box-shadow: none; width: 100%; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>School Athletics Schedule</h2>
+
+    <div id="filters">
+        </div>
+
+    <div class="controls">
+        <button class="print-btn" onclick="window.print()">Print Calendar</button>
+        <span style="font-size: 0.8em; color: #666;">*Select sports to filter view</span>
+    </div>
+
+    <div id="calendar"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.8/index.global.min.js"></script>
+
+<script>
+    // 1. CONFIGURATION: Replace with your actual data
+    const GOOGLE_API_KEY = 'YOUR_ACTUAL_GOOGLE_API_KEY';
+    
+    const sports = [
+        { id: 'jh_vb', name: 'JH Volleyball', color: '#e74c3c', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'hs_vb', name: 'HS Volleyball', color: '#c0392b', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'jh_fb', name: 'JH Football', color: '#27ae60', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'hs_fb', name: 'HS Football', color: '#2ecc71', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'jh_bk', name: 'JH Basketball', color: '#f39c12', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'hs_bk', name: 'HS Basketball', color: '#e67e22', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'jh_tr', name: 'JH Track', color: '#9b59b6', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'hs_tr', name: 'HS Track', color: '#8e44ad', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'sb', name: 'Softball', color: '#ff69b4', calendarId: 'ID_HERE@group.calendar.google.com' },
+        { id: 'bb', name: 'Baseball', color: '#3498db', calendarId: 'ID_HERE@group.calendar.google.com' }
+    ];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const filterEl = document.getElementById('filters');
+
+        // Create the Checkboxes
+        sports.forEach(sport => {
+            const div = document.createElement('div');
+            div.className = 'filter-item';
+            div.innerHTML = `<input type="checkbox" id="${sport.id}" checked> <label for="${sport.id}">${sport.name}</label>`;
+            filterEl.appendChild(div);
+
+            // Add Event Listener to Toggle
+            div.querySelector('input').addEventListener('change', function() {
+                const source = calendar.getEventSourceById(sport.id);
+                if (this.checked) {
+                    calendar.addEventSource(createSource(sport));
+                } else {
+                    if (source) source.remove();
+                }
+            });
+        });
+
+        // Helper to create the source object
+        function createSource(sport) {
+            return {
+                id: sport.id,
+                googleCalendarId: sport.calendarId,
+                backgroundColor: sport.color,
+                borderColor: sport.color
+            };
+        }
+
+        // Initialize Calendar
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            googleCalendarApiKey: GOOGLE_API_KEY,
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listMonth'
+            },
+            eventClick: function(info) {
+                info.jsEvent.preventDefault(); // Prevents browser from following link
+                alert("Event: " + info.event.title + "\nLocation: " + (info.event.extendedProps.location || "Not specified"));
+            },
+            eventSources: sports.map(sport => createSource(sport))
+        });
+
+        calendar.render();
+    });
+</script>
+
+</body>
+</html>
