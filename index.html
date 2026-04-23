@@ -41,6 +41,18 @@
             #filters, .controls, .header-bar, .season-group { display: none; }
             .container { box-shadow: none; width: 100%; max-width: 100%; padding: 0; }
         }
+
+        .season-jumps { display: flex; gap: 5px; }
+.jump-btn { 
+    background-color: var(--chiefs-black); 
+    color: white; 
+    border: 2px solid var(--chiefs-red);
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+}
+.jump-btn:hover { background-color: var(--chiefs-red); }
     </style>
 </head>
 <body>
@@ -53,9 +65,13 @@
     <div id="filters"></div>
 
     <div class="controls">
-        <span style="font-weight: bold; color: var(--chiefs-red);">TIP: Use 'Season View' to print the full year!</span>
-        <button class="print-btn" onclick="window.print()">PRINT SCHEDULE</button>
+    <div class="season-jumps">
+        <button class="jump-btn" onclick="jumpToSeason('2026-08-01', 5)">FALL</button>
+        <button class="jump-btn" onclick="jumpToSeason('2026-11-01', 5)">WINTER</button>
+        <button class="jump-btn" onclick="jumpToSeason('2027-03-01', 4)">SPRING</button>
     </div>
+    <button class="print-btn" onclick="window.print()">PRINT SCHEDULE</button>
+</div>
 
     <div id="calendar"></div>
 
@@ -108,25 +124,27 @@
         { id: 'bb', name: 'Baseball', color: '#000000' }
     ];
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const calendarEl = document.getElementById('calendar');
-        const filterEl = document.getElementById('filters');
+  let calendar; // Move to global scope
 
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            // ENABLE MULTI-MONTH VIEW
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,multiMonthYear,listMonth'
-            },
-            views: {
-                multiMonthYear: {
-                    buttonText: 'Season View',
-                    duration: { months: 4 } // Shows 4 months at a time for a full season!
-                }
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,multiMonthYear,listMonth'
+        },
+        views: {
+            multiMonthYear: {
+                buttonText: 'Season View',
+                // We set a large duration so it doesn't cut off 
+                // and use the function below to "zoom"
+                duration: { months: 12 } 
             }
-        });
+        }
+    });
 
         // Initialize sports and filters...
         sports.forEach(sport => {
@@ -149,6 +167,18 @@
         });
 
         calendar.render();
+
+    // The Jump Function
+function jumpToSeason(startDate, monthCount) {
+    // 1. Switch to Multi-Month View
+    calendar.changeView('multiMonthYear');
+    
+    // 2. Set the specific start date
+    calendar.gotoDate(startDate);
+    
+    // 3. Optional: Alert the user or update a label
+    console.log("Viewing " + monthCount + " months starting from " + startDate);
+}
     });
 </script>
 </body>
