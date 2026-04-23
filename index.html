@@ -6,84 +6,160 @@
     <title>Santa Fe Chiefs Athletics</title>
     
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    
     <style>
-        :root { --chiefs-red: #a51515; --chiefs-black: #000000; --chiefs-gray: #f4f4f4; }
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background-color: var(--chiefs-gray); }
-        .header-bar { background-color: var(--chiefs-red); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--chiefs-black); }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 30px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* Seasonal Subscribe Sections */
+        :root {
+            --chiefs-red: #a51515;
+            --chiefs-black: #000000;
+            --chiefs-gray: #f4f4f4;
+        }
+
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            background-color: var(--chiefs-gray); 
+        }
+
+        .header-bar {
+            background-color: var(--chiefs-red);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--chiefs-black);
+            margin-bottom: 20px;
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 4px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+
+        /* Filter Section */
+        #filters { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            justify-content: center; 
+            margin-bottom: 25px; 
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .filter-item { 
+            display: flex; 
+            align-items: center; 
+            background: var(--chiefs-black); 
+            color: white;
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            font-size: 0.85em; 
+            cursor: pointer; 
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .filter-item input { margin-right: 10px; accent-color: var(--chiefs-red); }
+
+        /* Controls & Season Jumps */
+        .controls { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 15px; 
+            align-items: center; 
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .season-jumps { display: flex; gap: 5px; }
+
+        .jump-btn { 
+            background-color: var(--chiefs-black); 
+            color: white; 
+            border: 2px solid var(--chiefs-red);
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .jump-btn:hover { background-color: var(--chiefs-red); }
+
+        .print-btn { 
+            background-color: var(--chiefs-red); 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Calendar Styling */
+        .fc-header-toolbar { text-transform: uppercase; font-weight: bold; }
+        .fc-button-primary { 
+            background-color: var(--chiefs-red) !important; 
+            border-color: var(--chiefs-red) !important; 
+        }
+        .fc-button-primary:hover { 
+            background-color: var(--chiefs-black) !important; 
+            border-color: var(--chiefs-black) !important; 
+        }
+
+        /* Subscription Sections */
         .season-group { margin-top: 30px; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: white; }
         .season-header { 
             background: var(--chiefs-black); color: white; padding: 10px; 
             margin: -15px -15px 15px -15px; border-radius: 8px 8px 0 0; 
-            text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px;
+            text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px; font-weight: bold;
         }
         .subscribe-grid { display: flex; flex-wrap: wrap; gap: 10px; }
         .sub-link { 
             background: white; color: var(--chiefs-black); border: 1px solid var(--chiefs-black); 
             padding: 8px 12px; text-decoration: none; border-radius: 4px; font-size: 0.8em; font-weight: bold; 
         }
-        .sub-link:hover { background: var(--chiefs-red); color: white; }
-
-        /* Filter Styles */
-        #filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; }
-        .filter-item { 
-            display: flex; align-items: center; background: var(--chiefs-black); 
-            color: white; padding: 8px 15px; border-radius: 4px; font-size: 0.85em; font-weight: bold;
-        }
-        .filter-item input { margin-right: 10px; accent-color: var(--chiefs-red); }
-
-        .controls { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
-        .print-btn { background-color: var(--chiefs-red); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .sub-link:hover { background: var(--chiefs-red); color: white; border-color: var(--chiefs-red); }
 
         @media print {
-            #filters, .controls, .header-bar, .season-group { display: none; }
+            #filters, .controls, .header-bar, .season-group, h2 { display: none; }
             .container { box-shadow: none; width: 100%; max-width: 100%; padding: 0; }
         }
-
-        .season-jumps { display: flex; gap: 5px; }
-.jump-btn { 
-    background-color: var(--chiefs-black); 
-    color: white; 
-    border: 2px solid var(--chiefs-red);
-    padding: 8px 15px;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 4px;
-}
-.jump-btn:hover { background-color: var(--chiefs-red); }
     </style>
 </head>
 <body>
 
 <div class="header-bar">
     <h1 style="margin:0;">SANTA FE CHIEFS ATHLETICS</h1>
+    <p id="academic-year-label" style="margin:5px 0 0 0; opacity: 0.9;">Official Sports Schedules</p>
 </div>
 
 <div class="container">
     <div id="filters"></div>
 
     <div class="controls">
-    <div class="season-jumps">
-        <button class="jump-btn" onclick="jumpToSeason('2026-08-01', 5)">FALL</button>
-        <button class="jump-btn" onclick="jumpToSeason('2026-11-01', 5)">WINTER</button>
-        <button class="jump-btn" onclick="jumpToSeason('2027-03-01', 4)">SPRING</button>
+        <div class="season-jumps">
+            <button class="jump-btn" onclick="handleSeasonClick('fall')">FALL VIEW</button>
+            <button class="jump-btn" onclick="handleSeasonClick('winter')">WINTER VIEW</button>
+            <button class="jump-btn" onclick="handleSeasonClick('spring')">SPRING VIEW</button>
+        </div>
+        <button class="print-btn" onclick="window.print()">PRINT SCHEDULE</button>
     </div>
-    <button class="print-btn" onclick="window.print()">PRINT SCHEDULE</button>
-</div>
 
     <div id="calendar"></div>
 
-    <h2 style="text-align: center; margin-top: 50px; color: var(--chiefs-red);">SUBSCRIBE TO CHIEFS CALENDARS</h2>
+    <h2 style="text-align: center; margin-top: 50px; color: var(--chiefs-red); text-transform: uppercase;">Subscribe to Chiefs Calendars</h2>
 
     <div class="season-group">
         <div class="season-header">Fall Sports</div>
         <div class="subscribe-grid">
             <a href="https://calendar.google.com/calendar/ical/c_dfd1423d90a198b1e3f5f377967bef73038e8c5f1534f4943597bbfc71891820%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Volleyball</a>
-        <a href="https://calendar.google.com/calendar/ical/c_17393a4bae575b317427f647a5acd290f896e39f839738f9bbbeb7cdf823042d%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Volleyball</a>
-        <a href="https://calendar.google.com/calendar/ical/c_155213f7e0e9940139462e47a38f7e8c04cd66b468705371cadd2a0f0ab09af1%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Football</a>
-        <a href="https://calendar.google.com/calendar/ical/c_a9f2cc812095ce46283060150449807196be7885a9a719160a85eaad1f993702%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Football</a>
+			<a href="https://calendar.google.com/calendar/ical/c_17393a4bae575b317427f647a5acd290f896e39f839738f9bbbeb7cdf823042d%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Volleyball</a>
+			<a href="https://calendar.google.com/calendar/ical/c_155213f7e0e9940139462e47a38f7e8c04cd66b468705371cadd2a0f0ab09af1%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Football</a>
+			<a href="https://calendar.google.com/calendar/ical/c_a9f2cc812095ce46283060150449807196be7885a9a719160a85eaad1f993702%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Football</a>
         </div>
     </div>
 
@@ -91,17 +167,17 @@
         <div class="season-header">Winter Sports</div>
         <div class="subscribe-grid">
             <a href="https://calendar.google.com/calendar/ical/c_e4dff517af6abef3374877d175be9266380d3c48c0d3f696c1650827cfd5c031%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Basketball</a>
-        <a href="https://calendar.google.com/calendar/ical/c_1ad0c08db8124f1e067b5617ec59c186162b22df2743bbbce23a209b0bf0a33f%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Basketball</a>
+			<a href="https://calendar.google.com/calendar/ical/c_1ad0c08db8124f1e067b5617ec59c186162b22df2743bbbce23a209b0bf0a33f%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Basketball</a>
         </div>
     </div>
 
     <div class="season-group">
         <div class="season-header">Spring Sports</div>
         <div class="subscribe-grid">
-           <a href="https://calendar.google.com/calendar/ical/c_074082d15e1f187af7ea4f5406b2de705f4e093f4140c42b1cefd943a078372e%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Track</a>
-        <a href="https://calendar.google.com/calendar/ical/c_d41374caf89f49d4996556e06ed3bbab8e26b0f8023ddb087db72e2e21e44c83%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Track</a>
-        <a href="https://calendar.google.com/calendar/ical/c_fdf2841868ea953406689e1669ec05a1540e59587fcc50ebc6043a369cb80c8f%40group.calendar.google.com/public/basic.ics" class="sub-link">Softball</a>
-        <a href="https://calendar.google.com/calendar/ical/c_4ad32231ccccd00275d828d0691134eca12073e5df5d45c36102dea616afffdc%40group.calendar.google.com/public/basic.ics" class="sub-link">Baseball</a>
+            <a href="https://calendar.google.com/calendar/ical/c_074082d15e1f187af7ea4f5406b2de705f4e093f4140c42b1cefd943a078372e%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Track</a>
+			<a href="https://calendar.google.com/calendar/ical/c_d41374caf89f49d4996556e06ed3bbab8e26b0f8023ddb087db72e2e21e44c83%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Track</a>
+			<a href="https://calendar.google.com/calendar/ical/c_fdf2841868ea953406689e1669ec05a1540e59587fcc50ebc6043a369cb80c8f%40group.calendar.google.com/public/basic.ics" class="sub-link">Softball</a>
+			<a href="https://calendar.google.com/calendar/ical/c_4ad32231ccccd00275d828d0691134eca12073e5df5d45c36102dea616afffdc%40group.calendar.google.com/public/basic.ics" class="sub-link">Baseball</a>
         </div>
     </div>
 </div>
@@ -109,6 +185,7 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
+    // --- CONFIGURATION ---
     const PROXY_URL = 'https://script.google.com/macros/s/AKfycbyn0TioU0zScUNKcx4ru5ugmReV_LW4SESWYGkDcxdUh7hoFIzWb7jLm9wlRc8tIjx97A/exec';
 
     const sports = [
@@ -124,29 +201,36 @@
         { id: 'bb', name: 'Baseball', color: '#000000' }
     ];
 
-  let calendar; // Move to global scope
+    let calendar;
 
-document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar');
-    
-    calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,multiMonthYear,listMonth'
-        },
-        views: {
-            multiMonthYear: {
-                buttonText: 'Season View',
-                // We set a large duration so it doesn't cut off 
-                // and use the function below to "zoom"
-                duration: { months: 12 } 
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const filterEl = document.getElementById('filters');
+
+        // Set Dynamic Academic Year Label
+        const now = new Date();
+        const displayYear = (now.getMonth() >= 6) 
+            ? `${now.getFullYear()}-${now.getFullYear() + 1}` 
+            : `${now.getFullYear() - 1}-${now.getFullYear()}`;
+        document.getElementById('academic-year-label').innerText = `Official Schedules for ${displayYear}`;
+
+        // Initialize Calendar
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,multiMonthYear,listMonth'
+            },
+            views: {
+                multiMonthYear: {
+                    buttonText: 'Season View',
+                    duration: { months: 12 }
+                }
             }
-        }
-    });
+        });
 
-        // Initialize sports and filters...
+        // Create Checkboxes and Load Data
         sports.forEach(sport => {
             const div = document.createElement('div');
             div.className = 'filter-item';
@@ -154,7 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
             filterEl.appendChild(div);
 
             const sourceUrl = `${PROXY_URL}?sport=${encodeURIComponent(sport.name)}`;
-            calendar.addEventSource({ id: sport.id, url: sourceUrl, backgroundColor: sport.color, borderColor: sport.color });
+
+            calendar.addEventSource({
+                id: sport.id,
+                url: sourceUrl,
+                backgroundColor: sport.color,
+                borderColor: sport.color
+            });
 
             div.querySelector('input').addEventListener('change', function() {
                 if (this.checked) {
@@ -167,19 +257,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         calendar.render();
-
-    // The Jump Function
-function jumpToSeason(startDate, monthCount) {
-    // 1. Switch to Multi-Month View
-    calendar.changeView('multiMonthYear');
-    
-    // 2. Set the specific start date
-    calendar.gotoDate(startDate);
-    
-    // 3. Optional: Alert the user or update a label
-    console.log("Viewing " + monthCount + " months starting from " + startDate);
-}
     });
+
+    // Seasonal Jump Logic
+    function handleSeasonClick(season) {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        let targetDate;
+
+        if (season === 'fall') {
+            const targetYear = (currentMonth >= 6) ? currentYear : currentYear - 1;
+            targetDate = `${targetYear}-08-01`;
+        } else if (season === 'winter') {
+            const targetYear = (currentMonth >= 6) ? currentYear : currentYear - 1;
+            targetDate = `${targetYear}-11-01`;
+        } else if (season === 'spring') {
+            const targetYear = (currentMonth >= 6) ? currentYear + 1 : currentYear;
+            targetDate = `${targetYear}-03-01`;
+        }
+
+        calendar.changeView('multiMonthYear');
+        calendar.gotoDate(targetDate);
+    }
 </script>
+
 </body>
 </html>
