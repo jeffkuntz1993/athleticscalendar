@@ -8,197 +8,194 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
     
     <style>
-    :root {
-        --chiefs-red: #a51515;
-        --chiefs-black: #000000;
-        --chiefs-gray: #f4f4f4;
-    }
-
-    body { 
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-        margin: 0; 
-        background-color: var(--chiefs-gray); 
-    }
-
-    .header-bar {
-        background-color: var(--chiefs-red);
-        color: white;
-        padding: 20px;
-        text-align: center;
-        border-bottom: 5px solid var(--chiefs-black);
-        margin-bottom: 20px;
-    }
-
-    .container { 
-        max-width: 1200px; 
-        margin: auto; 
-        background: white; 
-        padding: 30px; 
-        border-radius: 4px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-    }
-
-    /* Filter Section */
-    #filters { 
-        display: flex; 
-        flex-wrap: wrap; 
-        gap: 10px; 
-        justify-content: center; 
-        margin-bottom: 25px; 
-        padding-bottom: 20px;
-        border-bottom: 2px solid #eee;
-    }
-
-    .filter-item { 
-        display: flex; 
-        align-items: center; 
-        background: var(--chiefs-black); 
-        color: white;
-        padding: 8px 15px; 
-        border-radius: 4px; 
-        font-size: 0.85em; 
-        cursor: pointer; 
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-
-    .filter-item input { margin-right: 10px; accent-color: var(--chiefs-red); }
-
-    /* Controls & Season Jumps */
-    .controls { 
-        display: flex; 
-        justify-content: space-between; 
-        margin-bottom: 15px; 
-        align-items: center; 
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .season-jumps { display: flex; gap: 5px; }
-
-    .jump-btn { 
-        background-color: var(--chiefs-black); 
-        color: white; 
-        border: 2px solid var(--chiefs-red);
-        padding: 8px 15px;
-        cursor: pointer;
-        font-weight: bold;
-        border-radius: 4px;
-        font-size: 0.8em;
-    }
-
-    .jump-btn:hover { background-color: var(--chiefs-red); }
-
-    .print-btn { 
-        background-color: var(--chiefs-red); 
-        color: white; 
-        padding: 10px 20px; 
-        border: none; 
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    /* FullCalendar Customizations */
-    .fc-header-toolbar { text-transform: uppercase; font-weight: bold; }
-    .fc-button-primary { 
-        background-color: var(--chiefs-red) !important; 
-        border-color: var(--chiefs-red) !important; 
-    }
-    .fc-button-primary:hover { 
-        background-color: var(--chiefs-black) !important; 
-        border-color: var(--chiefs-black) !important; 
-    }
-
-    /* Subscription Sections */
-    .season-group { margin-top: 30px; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: white; }
-    .season-header { 
-        background: var(--chiefs-black); color: white; padding: 10px; 
-        margin: -15px -15px 15px -15px; border-radius: 8px 8px 0 0; 
-        text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px; font-weight: bold;
-    }
-    .subscribe-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-    .sub-link { 
-        background: white; color: var(--chiefs-black); border: 1px solid var(--chiefs-black); 
-        padding: 8px 12px; text-decoration: none; border-radius: 4px; font-size: 0.8em; font-weight: bold; 
-    }
-    .sub-link:hover { background: var(--chiefs-red); color: white; border-color: var(--chiefs-red); }
-
-    /* CRITICAL PRINT LOGIC */
-    @media print {
-        /* Hide everything except the calendar container */
-        #filters, .controls, .header-bar, .season-group, h2, .fc-header-toolbar, .fc-footer-toolbar { 
-            display: none !important; 
+        :root {
+            --chiefs-red: #a51515;
+            --chiefs-black: #000000;
+            --chiefs-gray: #f4f4f4;
         }
-        
-        /* Remove shadows and backgrounds that might interfere */
-        body { background-color: white !important; }
+
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            background-color: var(--chiefs-gray); 
+        }
+
+        /* --- PRINT PREVIEW MODE STYLES --- */
+        #print-action-bar {
+            display: none;
+            background: var(--chiefs-black);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        body.print-view-active #print-action-bar { display: block; }
+
+        body.print-view-active .header-bar,
+        body.print-view-active #filters,
+        body.print-view-active .controls,
+        body.print-view-active .season-group,
+        body.print-view-active h2 {
+            display: none !important;
+        }
+
+        body.print-view-active .container {
+            box-shadow: none;
+            max-width: 100%;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* --- STANDARD STYLES --- */
+        .header-bar {
+            background-color: var(--chiefs-red);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--chiefs-black);
+            margin-bottom: 20px;
+        }
+
         .container { 
-            box-shadow: none !important; 
-            width: 100% !important; 
-            max-width: 100% !important; 
-            padding: 0 !important; 
-            margin: 0 !important;
+            max-width: 1200px; 
+            margin: auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 4px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
         }
 
-        /* Force the calendar to expand fully so scrollbars disappear */
-        .fc-scroller {
-            overflow: visible !important;
-            height: auto !important;
+        /* Filter Section */
+        #filters { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            justify-content: center; 
+            margin-bottom: 25px; 
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
         }
-        
-        /* Ensure background colors for events print correctly */
-        * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+
+        .filter-item { 
+            display: flex; 
+            align-items: center; 
+            background: var(--chiefs-black); 
+            color: white;
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            font-size: 0.85em; 
+            cursor: pointer; 
+            font-weight: bold;
+            text-transform: uppercase;
         }
-    }
-		/* --- PRINT PREVIEW MODE STYLES --- */
-#print-action-bar {
-    display: none;
-    background: var(--chiefs-black);
-    color: white;
-    padding: 15px 20px;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
 
-body.print-view-active #print-action-bar { display: block; }
+        .filter-item input { margin-right: 10px; accent-color: var(--chiefs-red); width: 16px; height: 16px; }
 
-body.print-view-active .header-bar,
-body.print-view-active #filters,
-body.print-view-active .controls,
-body.print-view-active .season-group,
-body.print-view-active h2 {
-    display: none !important;
-}
+        /* Controls & Season Jumps */
+        .controls { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 15px; 
+            align-items: center; 
+            flex-wrap: wrap;
+            gap: 10px;
+        }
 
-body.print-view-active .container {
-    box-shadow: none;
-    max-width: 100%;
-    padding: 20px;
-    margin: 0;
-}
+        .season-jumps { display: flex; gap: 5px; flex-wrap: wrap; }
 
-/* Ensure the action bar itself doesn't print when they hit Print Now */
-@media print {
-    #print-action-bar { display: none !important; }
-}
-</style>
-	
+        .jump-btn, .print-btn { 
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .jump-btn { 
+            background-color: var(--chiefs-black); 
+            color: white; 
+            border: 2px solid var(--chiefs-red);
+        }
+
+        .jump-btn:hover { background-color: var(--chiefs-red); }
+
+        .print-btn { 
+            background-color: var(--chiefs-red); 
+            color: white; 
+            border: none; 
+        }
+
+        /* Calendar Styling */
+        .fc-header-toolbar { text-transform: uppercase; font-weight: bold; }
+        .fc-button-primary { 
+            background-color: var(--chiefs-red) !important; 
+            border-color: var(--chiefs-red) !important; 
+        }
+        .fc-button-primary:hover { 
+            background-color: var(--chiefs-black) !important; 
+            border-color: var(--chiefs-black) !important; 
+        }
+
+        /* Subscription Sections */
+        .season-group { margin-top: 30px; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: white; }
+        .season-header { 
+            background: var(--chiefs-black); color: white; padding: 10px; 
+            margin: -15px -15px 15px -15px; border-radius: 8px 8px 0 0; 
+            text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px; font-weight: bold;
+        }
+        .subscribe-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        .sub-link { 
+            background: white; color: var(--chiefs-black); border: 1px solid var(--chiefs-black); 
+            padding: 8px 12px; text-decoration: none; border-radius: 4px; font-size: 0.8em; font-weight: bold; 
+            flex-grow: 1; text-align: center; /* Helps buttons stretch nicely on mobile */
+        }
+        .sub-link:hover { background: var(--chiefs-red); color: white; border-color: var(--chiefs-red); }
+
+        /* --- MOBILE RESPONSIVENESS STYLES --- */
+        @media (max-width: 768px) {
+            .container { padding: 15px; margin: 10px; }
+            .header-bar { padding: 15px 10px; }
+            .header-bar h1 { font-size: 1.5em; }
+            
+            /* Stack controls vertically for easier tapping */
+            .controls { flex-direction: column; align-items: stretch; gap: 15px; }
+            .season-jumps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+            .jump-btn { padding: 12px 5px; font-size: 0.75em; }
+            .print-btn { padding: 12px; font-size: 0.9em; }
+            
+            /* Fix FullCalendar Toolbar on small screens */
+            .fc .fc-toolbar { flex-direction: column; gap: 15px; }
+            .fc .fc-toolbar-chunk { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; }
+        }
+
+        /* --- ACTUAL PRINT RULES --- */
+        @media print {
+            #print-action-bar, #filters, .controls, .header-bar, .season-group, h2, .fc-header-toolbar, .fc-footer-toolbar { 
+                display: none !important; 
+            }
+            body { background-color: white !important; }
+            .container { box-shadow: none !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            .fc-scroller { overflow: visible !important; height: auto !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
 </head>
 <body>
+
 <div id="print-action-bar">
     <div style="font-weight: bold; font-size: 1.2em;">PRINT PREVIEW MODE</div>
     <div style="font-size: 0.85em; opacity: 0.9; margin-bottom: 10px;">Select Landscape and 80% Scale in your printer settings for best results.</div>
-    <div>
+    <div style="display: flex; justify-content: center; gap: 10px;">
         <button class="print-btn" onclick="window.print()" style="background: white; color: var(--chiefs-red);">PRINT NOW</button>
         <button class="jump-btn" onclick="togglePrintView()" style="border-color: white;">EXIT PREVIEW</button>
     </div>
 </div>
+
 <div class="header-bar">
     <h1 style="margin:0;">SANTA FE CHIEFS ATHLETICS</h1>
     <p id="academic-year-label" style="margin:5px 0 0 0; opacity: 0.9;">Official Sports Schedules</p>
@@ -223,28 +220,28 @@ body.print-view-active .container {
     <div class="season-group">
         <div class="season-header">Fall Sports</div>
         <div class="subscribe-grid">
-            <a href="https://calendar.google.com/calendar/ical/c_dfd1423d90a198b1e3f5f377967bef73038e8c5f1534f4943597bbfc71891820%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Volleyball</a>
-			<a href="https://calendar.google.com/calendar/ical/c_17393a4bae575b317427f647a5acd290f896e39f839738f9bbbeb7cdf823042d%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Volleyball</a>
-			<a href="https://calendar.google.com/calendar/ical/c_155213f7e0e9940139462e47a38f7e8c04cd66b468705371cadd2a0f0ab09af1%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Football</a>
-			<a href="https://calendar.google.com/calendar/ical/c_a9f2cc812095ce46283060150449807196be7885a9a719160a85eaad1f993702%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Football</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_dfd1423d90a198b1e3f5f377967bef73038e8c5f1534f4943597bbfc71891820%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Volleyball</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_17393a4bae575b317427f647a5acd290f896e39f839738f9bbbeb7cdf823042d%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Volleyball</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_155213f7e0e9940139462e47a38f7e8c04cd66b468705371cadd2a0f0ab09af1%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Football</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_a9f2cc812095ce46283060150449807196be7885a9a719160a85eaad1f993702%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Football</a>
         </div>
     </div>
 
     <div class="season-group">
         <div class="season-header">Winter Sports</div>
         <div class="subscribe-grid">
-            <a href="https://calendar.google.com/calendar/ical/c_e4dff517af6abef3374877d175be9266380d3c48c0d3f696c1650827cfd5c031%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Basketball</a>
-			<a href="https://calendar.google.com/calendar/ical/c_1ad0c08db8124f1e067b5617ec59c186162b22df2743bbbce23a209b0bf0a33f%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Basketball</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_e4dff517af6abef3374877d175be9266380d3c48c0d3f696c1650827cfd5c031%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Basketball</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_1ad0c08db8124f1e067b5617ec59c186162b22df2743bbbce23a209b0bf0a33f%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Basketball</a>
         </div>
     </div>
 
     <div class="season-group">
         <div class="season-header">Spring Sports</div>
         <div class="subscribe-grid">
-            <a href="https://calendar.google.com/calendar/ical/c_074082d15e1f187af7ea4f5406b2de705f4e093f4140c42b1cefd943a078372e%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Track</a>
-			<a href="https://calendar.google.com/calendar/ical/c_d41374caf89f49d4996556e06ed3bbab8e26b0f8023ddb087db72e2e21e44c83%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Track</a>
-			<a href="https://calendar.google.com/calendar/ical/c_fdf2841868ea953406689e1669ec05a1540e59587fcc50ebc6043a369cb80c8f%40group.calendar.google.com/public/basic.ics" class="sub-link">Softball</a>
-			<a href="https://calendar.google.com/calendar/ical/c_4ad32231ccccd00275d828d0691134eca12073e5df5d45c36102dea616afffdc%40group.calendar.google.com/public/basic.ics" class="sub-link">Baseball</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_074082d15e1f187af7ea4f5406b2de705f4e093f4140c42b1cefd943a078372e%40group.calendar.google.com/public/basic.ics" class="sub-link">JH Track</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_d41374caf89f49d4996556e06ed3bbab8e26b0f8023ddb087db72e2e21e44c83%40group.calendar.google.com/public/basic.ics" class="sub-link">HS Track</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_fdf2841868ea953406689e1669ec05a1540e59587fcc50ebc6043a369cb80c8f%40group.calendar.google.com/public/basic.ics" class="sub-link">Softball</a>
+            <a href="webcal://calendar.google.com/calendar/ical/c_4ad32231ccccd00275d828d0691134eca12073e5df5d45c36102dea616afffdc%40group.calendar.google.com/public/basic.ics" class="sub-link">Baseball</a>
         </div>
     </div>
 </div>
@@ -287,11 +284,11 @@ body.print-view-active .container {
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,multiMonthYear,listMonth'
+                right: 'dayGridMonth,multiMonthYear,listMonth' // listMonth is perfect for mobile!
             },
             views: {
                 multiMonthYear: {
-                    buttonText: 'year',
+                    buttonText: 'Season View',
                     duration: { months: 12 }
                 }
             }
@@ -326,7 +323,7 @@ body.print-view-active .container {
         calendar.render();
     });
 
-    // Seasonal Jump Logic
+    // Seasonal Jump Logic 
     function handleSeasonClick(season) {
         const now = new Date();
         const currentMonth = now.getMonth();
@@ -346,21 +343,19 @@ body.print-view-active .container {
 
         calendar.changeView('multiMonthYear');
         calendar.gotoDate(targetDate);
+    }
 
-		// Print Preview Toggle Logic
-function togglePrintView() {
-    document.body.classList.toggle('print-view-active');
-    
-    // Give the browser a split second to apply the CSS, then tell the calendar to resize
-    setTimeout(() => {
-        if (calendar) {
-            calendar.updateSize();
-        }
-    }, 100);
-    
-    // Scroll to the top so they see the action bar
-    window.scrollTo(0, 0);
-}
+    // Print Preview Toggle Logic 
+    function togglePrintView() {
+        document.body.classList.toggle('print-view-active');
+        
+        setTimeout(() => {
+            if (calendar) {
+                calendar.updateSize();
+            }
+        }, 100);
+        
+        window.scrollTo(0, 0);
     }
 </script>
 
