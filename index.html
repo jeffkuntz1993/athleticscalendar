@@ -153,11 +153,52 @@
             print-color-adjust: exact !important;
         }
     }
+		/* --- PRINT PREVIEW MODE STYLES --- */
+#print-action-bar {
+    display: none;
+    background: var(--chiefs-black);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+body.print-view-active #print-action-bar { display: block; }
+
+body.print-view-active .header-bar,
+body.print-view-active #filters,
+body.print-view-active .controls,
+body.print-view-active .season-group,
+body.print-view-active h2 {
+    display: none !important;
+}
+
+body.print-view-active .container {
+    box-shadow: none;
+    max-width: 100%;
+    padding: 20px;
+    margin: 0;
+}
+
+/* Ensure the action bar itself doesn't print when they hit Print Now */
+@media print {
+    #print-action-bar { display: none !important; }
+}
 </style>
 	
 </head>
 <body>
-
+<div id="print-action-bar">
+    <div style="font-weight: bold; font-size: 1.2em;">PRINT PREVIEW MODE</div>
+    <div style="font-size: 0.85em; opacity: 0.9; margin-bottom: 10px;">Select Landscape and 80% Scale in your printer settings for best results.</div>
+    <div>
+        <button class="print-btn" onclick="window.print()" style="background: white; color: var(--chiefs-red);">PRINT NOW</button>
+        <button class="jump-btn" onclick="togglePrintView()" style="border-color: white;">EXIT PREVIEW</button>
+    </div>
+</div>
 <div class="header-bar">
     <h1 style="margin:0;">SANTA FE CHIEFS ATHLETICS</h1>
     <p id="academic-year-label" style="margin:5px 0 0 0; opacity: 0.9;">Official Sports Schedules</p>
@@ -172,7 +213,7 @@
             <button class="jump-btn" onclick="handleSeasonClick('winter')">WINTER VIEW</button>
             <button class="jump-btn" onclick="handleSeasonClick('spring')">SPRING VIEW</button>
         </div>
-        <button class="print-btn" onclick="window.print()">PRINT SCHEDULE</button>
+        <button class="print-btn" onclick="togglePrintView()">PRINT VIEW</button>
     </div>
 
     <div id="calendar"></div>
@@ -305,6 +346,21 @@
 
         calendar.changeView('multiMonthYear');
         calendar.gotoDate(targetDate);
+
+		// Print Preview Toggle Logic
+function togglePrintView() {
+    document.body.classList.toggle('print-view-active');
+    
+    // Give the browser a split second to apply the CSS, then tell the calendar to resize
+    setTimeout(() => {
+        if (calendar) {
+            calendar.updateSize();
+        }
+    }, 100);
+    
+    // Scroll to the top so they see the action bar
+    window.scrollTo(0, 0);
+}
     }
 </script>
 
