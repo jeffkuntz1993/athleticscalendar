@@ -40,6 +40,29 @@
         }
 
         /* Filter Section */
+        .filter-controls {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .toggle-all-btn {
+            background-color: var(--chiefs-red); 
+            color: white; 
+            border: 2px solid var(--chiefs-black);
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .toggle-all-btn:hover {
+            background-color: var(--chiefs-black); 
+            border-color: var(--chiefs-red);
+        }
+
         #filters { 
             display: flex; 
             flex-wrap: wrap; 
@@ -68,7 +91,7 @@
         /* Controls & Season Jumps */
         .controls { 
             display: flex; 
-            justify-content: center; /* Centered since print is gone */
+            justify-content: center; 
             margin-bottom: 15px; 
         }
 
@@ -121,6 +144,11 @@
 </div>
 
 <div class="container">
+    
+    <div class="filter-controls">
+        <button id="toggle-all-btn" class="toggle-all-btn">UNSELECT ALL</button>
+    </div>
+
     <div id="filters"></div>
 
     <div class="controls">
@@ -138,7 +166,7 @@
 
 <script>
     // --- CONFIGURATION ---
-    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbyn0TioU0zScUNKcx4ru5ugmReV_LW4SESWYGkDcxdUh7hoFIzWb7jLm9wlRc8tIjx97A/exec';
+    const PROXY_URL = 'https://script.google.com/macros/library/d/1OWGDmPLz5VAsgNqlpmE0EuR10QBzW-PHoUvTmVtIoeV7KhjKCJnYq0i4/1';
 
     const sports = [
         { id: 'jh_vb', name: 'JH Volleyball', color: '#a51515' },
@@ -158,6 +186,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('calendar');
         const filterEl = document.getElementById('filters');
+        const toggleAllBtn = document.getElementById('toggle-all-btn');
 
         // Set Dynamic Academic Year Label
         const now = new Date();
@@ -175,11 +204,9 @@
                 right: 'dayGridMonth,multiMonthYear,listMonth' 
             },
             views: {
-                // Rename default multiMonthYear button to "Year"
                 multiMonthYear: {
                     buttonText: 'Year'
                 },
-                // Create custom seasonal views with specific month durations
                 fallView: {
                     type: 'multiMonth',
                     duration: { months: 5 } // July - November
@@ -211,12 +238,43 @@
                 borderColor: sport.color
             });
 
+            // Standard individual checkbox logic
             div.querySelector('input').addEventListener('change', function() {
                 if (this.checked) {
                     calendar.addEventSource({ id: sport.id, url: sourceUrl, backgroundColor: sport.color, borderColor: sport.color });
                 } else {
                     const source = calendar.getEventSourceById(sport.id);
                     if (source) source.remove();
+                }
+            });
+        });
+
+        // Listen for ANY checkbox change inside filters to smartly update the button text
+        filterEl.addEventListener('change', function() {
+            const checkedCount = document.querySelectorAll('.filter-item input:checked').length;
+            if (checkedCount === 0) {
+                toggleAllBtn.innerText = 'SELECT ALL';
+            } else if (checkedCount === sports.length) {
+                toggleAllBtn.innerText = 'UNSELECT ALL';
+            }
+        });
+
+        // Toggle All Button Logic
+        toggleAllBtn.addEventListener('click', function() {
+            // Determine our goal based on what the button currently says
+            const isUnselecting = (this.innerText === 'UNSELECT ALL');
+            const targetState = !isUnselecting; 
+
+            // Update button text immediately
+            this.innerText = targetState ? 'UNSELECT ALL' : 'SELECT ALL';
+
+            sports.forEach(sport => {
+                const checkbox = document.getElementById(sport.id);
+                // Only toggle if it needs to change
+                if (checkbox.checked !== targetState) {
+                    checkbox.checked = targetState;
+                    // Programmatically trigger the 'change' event so the calendar updates
+                    checkbox.dispatchEvent(new Event('change'));
                 }
             });
         });
@@ -232,13 +290,13 @@
 
         if (season === 'fall') {
             const targetYear = (currentMonth >= 6) ? currentYear : currentYear - 1;
-            calendar.changeView('fallView', `${targetYear}-07-01`); // Starts at July 1
+            calendar.changeView('fallView', `${targetYear}-07-01`); 
         } else if (season === 'winter') {
             const targetYear = (currentMonth >= 6) ? currentYear : currentYear - 1;
-            calendar.changeView('winterView', `${targetYear}-11-01`); // Starts at Nov 1
+            calendar.changeView('winterView', `${targetYear}-11-01`); 
         } else if (season === 'spring') {
             const targetYear = (currentMonth >= 6) ? currentYear + 1 : currentYear;
-            calendar.changeView('springView', `${targetYear}-03-01`); // Starts at March 1
+            calendar.changeView('springView', `${targetYear}-03-01`); 
         }
     }
 </script>
