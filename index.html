@@ -3,124 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Athletics Calendar</title>
+    <title>Santa Fe Chiefs Athletics</title>
     
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f8f9fa; }
-        .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #2c3e50; }
-        
-        /* Filter Section */
-        #filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; padding: 15px; border-bottom: 1px solid #eee; }
-        .filter-item { display: flex; align-items: center; background: #e9ecef; padding: 5px 10px; border-radius: 20px; font-size: 0.9em; cursor: pointer; transition: 0.2s; }
-        .filter-item:hover { background: #dee2e6; }
-        .filter-item input { margin-right: 8px; }
+        :root {
+            --chiefs-red: #a51515;
+            --chiefs-black: #000000;
+            --chiefs-gray: #f4f4f4;
+        }
+
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            background-color: var(--chiefs-gray); 
+        }
+
+        /* Header Bar to match school site */
+        .header-bar {
+            background-color: var(--chiefs-red);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--chiefs-black);
+            margin-bottom: 20px;
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 4px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+
+        /* Chiefs Themed Filters */
+        #filters { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            justify-content: center; 
+            margin-bottom: 25px; 
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .filter-item { 
+            display: flex; 
+            align-items: center; 
+            background: var(--chiefs-black); 
+            color: white;
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            font-size: 0.85em; 
+            cursor: pointer; 
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .filter-item input { margin-right: 10px; accent-color: var(--chiefs-red); }
 
         /* Buttons */
-        .controls { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .print-btn { background-color: #6c757d; color: white; }
-        .export-btn { background-color: #28a745; color: white; }
+        .controls { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+        .print-btn { 
+            background-color: var(--chiefs-black); 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .print-btn:hover { background-color: var(--chiefs-red); }
 
-        /* Calendar Styling */
-        #calendar { margin-top: 20px; }
-        .fc-event { cursor: pointer; }
+        /* Calendar customization */
+        .fc-header-toolbar { text-transform: uppercase; font-weight: bold; }
+        .fc-button-primary { 
+            background-color: var(--chiefs-red) !important; 
+            border-color: var(--chiefs-red) !important; 
+        }
+        .fc-button-primary:hover { 
+            background-color: var(--chiefs-black) !important; 
+            border-color: var(--chiefs-black) !important; 
+        }
+        .fc-daygrid-event { border-radius: 3px; border: none !important; }
 
         @media print {
-            #filters, .controls { display: none; }
-            .container { box-shadow: none; width: 100%; max-width: 100%; }
+            #filters, .controls, .header-bar { display: none; }
+            .container { box-shadow: none; width: 100%; max-width: 100%; padding: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>School Athletics Schedule</h2>
+<div class="header-bar">
+    <h1 style="margin:0;">SANTA FE CHIEFS ATHLETICS</h1>
+    <p style="margin:5px 0 0 0; opacity: 0.9;">Official Sports Schedules</p>
+</div>
 
+<div class="container">
     <div id="filters">
         </div>
 
     <div class="controls">
-        <button class="print-btn" onclick="window.print()">Print Calendar</button>
-        <span style="font-size: 0.8em; color: #666;">*Select sports to filter view</span>
+        <button class="print-btn" onclick="window.print()">PRINT SCHEDULE</button>
     </div>
 
     <div id="calendar"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.8/index.global.min.js"></script>
 
 <script>
-  // 1. Paste your Web App URL here
-const PROXY_URL = 'https://script.google.com/macros/s/AKfycbyn0TioU0zScUNKcx4ru5ugmReV_LW4SESWYGkDcxdUh7hoFIzWb7jLm9wlRc8tIjx97A/exec';
+    // 1. UPDATE THIS WITH YOUR DEPLOYED WEB APP URL
+    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbyn0TioU0zScUNKcx4ru5ugmReV_LW4SESWYGkDcxdUh7hoFIzWb7jLm9wlRc8tIjx97A/exec';
 
-const sports = [
-    { id: 'jh_vb', name: 'JH Volleyball', color: '#e74c3c' },
-    { id: 'hs_vb', name: 'HS Volleyball', color: '#c0392b' },
-    { id: 'jh_fb', name: 'JH Football', color: '#27ae60' },
-    { id: 'hs_fb', name: 'HS Football', color: '#2ecc71' },
-    { id: 'jh_bk', name: 'JH Basketball', color: '#f39c12' },
-    { id: 'hs_bk', name: 'HS Basketball', color: '#e67e22' },
-    { id: 'jh_tr', name: 'JH Track', color: '#9b59b6' },
-    { id: 'hs_tr', name: 'HS Track', color: '#8e44ad' },
-    { id: 'sb', name: 'Softball', color: '#ff69b4' },
-    { id: 'bb', name: 'Baseball', color: '#3498db' }
-];
+    // 2. All sports now use Chiefs Red/Black theme
+    const sports = [
+        { id: 'jh_vb', name: 'JH Volleyball', color: '#a51515' },
+        { id: 'hs_vb', name: 'HS Volleyball', color: '#000000' },
+        { id: 'jh_fb', name: 'JH Football', color: '#a51515' },
+        { id: 'hs_fb', name: 'HS Football', color: '#000000' },
+        { id: 'jh_bk', name: 'JH Basketball', color: '#a51515' },
+        { id: 'hs_bk', name: 'HS Basketball', color: '#000000' },
+        { id: 'jh_tr', name: 'JH Track', color: '#a51515' },
+        { id: 'hs_tr', name: 'HS Track', color: '#000000' },
+        { id: 'sb', name: 'Softball', color: '#a51515' },
+        { id: 'bb', name: 'Baseball', color: '#000000' }
+    ];
 
-document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar');
-    const filterEl = document.getElementById('filters');
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const filterEl = document.getElementById('filters');
 
-    // Initialize Calendar
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,listMonth'
-        }
-    });
-
-    // Create Checkboxes and Load Data
-    sports.forEach(sport => {
-        const div = document.createElement('div');
-        div.className = 'filter-item';
-        div.innerHTML = `<input type="checkbox" id="${sport.id}" checked> <label for="${sport.id}">${sport.name}</label>`;
-        filterEl.appendChild(div);
-
-        // Define the source URL for this sport
-        const sourceUrl = `${PROXY_URL}?sport=${encodeURIComponent(sport.name)}`;
-
-        // Add to calendar initially
-        calendar.addEventSource({
-            id: sport.id,
-            url: sourceUrl,
-            method: 'GET',
-            extraParams: { sport: sport.name },
-            backgroundColor: sport.color,
-            borderColor: sport.color
-        });
-
-        // Toggle logic
-        div.querySelector('input').addEventListener('change', function() {
-            if (this.checked) {
-                calendar.addEventSource({
-                    id: sport.id,
-                    url: sourceUrl,
-                    backgroundColor: sport.color,
-                    borderColor: sport.color
-                });
-            } else {
-                const source = calendar.getEventSourceById(sport.id);
-                if (source) source.remove();
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listMonth'
             }
         });
-    });
 
-    calendar.render();
-});
+        sports.forEach(sport => {
+            const div = document.createElement('div');
+            div.className = 'filter-item';
+            div.innerHTML = `<input type="checkbox" id="${sport.id}" checked> <label for="${sport.id}">${sport.name}</label>`;
+            filterEl.appendChild(div);
+
+            const sourceUrl = `${PROXY_URL}?sport=${encodeURIComponent(sport.name)}`;
+
+            calendar.addEventSource({
+                id: sport.id,
+                url: sourceUrl,
+                backgroundColor: sport.color,
+                borderColor: sport.color
+            });
+
+            div.querySelector('input').addEventListener('change', function() {
+                if (this.checked) {
+                    calendar.addEventSource({ id: sport.id, url: sourceUrl, backgroundColor: sport.color, borderColor: sport.color });
+                } else {
+                    const source = calendar.getEventSourceById(sport.id);
+                    if (source) source.remove();
+                }
+            });
+        });
+
+        calendar.render();
+    });
 </script>
 
 </body>
