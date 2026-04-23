@@ -53,72 +53,74 @@
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.8/index.global.min.js"></script>
 
 <script>
-    // 1. CONFIGURATION: Replace with your actual data
-    const GOOGLE_API_KEY = 'YOUR_ACTUAL_GOOGLE_API_KEY';
-    
-    const sports = [
-        { id: 'jh_vb', name: 'JH Volleyball', color: '#e74c3c', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'hs_vb', name: 'HS Volleyball', color: '#c0392b', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'jh_fb', name: 'JH Football', color: '#27ae60', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'hs_fb', name: 'HS Football', color: '#2ecc71', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'jh_bk', name: 'JH Basketball', color: '#f39c12', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'hs_bk', name: 'HS Basketball', color: '#e67e22', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'jh_tr', name: 'JH Track', color: '#9b59b6', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'hs_tr', name: 'HS Track', color: '#8e44ad', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'sb', name: 'Softball', color: '#ff69b4', calendarId: 'ID_HERE@group.calendar.google.com' },
-        { id: 'bb', name: 'Baseball', color: '#3498db', calendarId: 'ID_HERE@group.calendar.google.com' }
-    ];
+  // 1. Paste your Web App URL here
+const PROXY_URL = 'https://script.google.com/macros/s/AKfycbyn0TioU0zScUNKcx4ru5ugmReV_LW4SESWYGkDcxdUh7hoFIzWb7jLm9wlRc8tIjx97A/exec';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const calendarEl = document.getElementById('calendar');
-        const filterEl = document.getElementById('filters');
+const sports = [
+    { id: 'jh_vb', name: 'JH Volleyball', color: '#e74c3c' },
+    { id: 'hs_vb', name: 'HS Volleyball', color: '#c0392b' },
+    { id: 'jh_fb', name: 'JH Football', color: '#27ae60' },
+    { id: 'hs_fb', name: 'HS Football', color: '#2ecc71' },
+    { id: 'jh_bk', name: 'JH Basketball', color: '#f39c12' },
+    { id: 'hs_bk', name: 'HS Basketball', color: '#e67e22' },
+    { id: 'jh_tr', name: 'JH Track', color: '#9b59b6' },
+    { id: 'hs_tr', name: 'HS Track', color: '#8e44ad' },
+    { id: 'sb', name: 'Softball', color: '#ff69b4' },
+    { id: 'bb', name: 'Baseball', color: '#3498db' }
+];
 
-        // Create the Checkboxes
-        sports.forEach(sport => {
-            const div = document.createElement('div');
-            div.className = 'filter-item';
-            div.innerHTML = `<input type="checkbox" id="${sport.id}" checked> <label for="${sport.id}">${sport.name}</label>`;
-            filterEl.appendChild(div);
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const filterEl = document.getElementById('filters');
 
-            // Add Event Listener to Toggle
-            div.querySelector('input').addEventListener('change', function() {
-                const source = calendar.getEventSourceById(sport.id);
-                if (this.checked) {
-                    calendar.addEventSource(createSource(sport));
-                } else {
-                    if (source) source.remove();
-                }
-            });
-        });
-
-        // Helper to create the source object
-        function createSource(sport) {
-            return {
-                id: sport.id,
-                googleCalendarId: sport.calendarId,
-                backgroundColor: sport.color,
-                borderColor: sport.color
-            };
+    // Initialize Calendar
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,listMonth'
         }
+    });
 
-        // Initialize Calendar
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            googleCalendarApiKey: GOOGLE_API_KEY,
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,listMonth'
-            },
-            eventClick: function(info) {
-                info.jsEvent.preventDefault(); // Prevents browser from following link
-                alert("Event: " + info.event.title + "\nLocation: " + (info.event.extendedProps.location || "Not specified"));
-            },
-            eventSources: sports.map(sport => createSource(sport))
+    // Create Checkboxes and Load Data
+    sports.forEach(sport => {
+        const div = document.createElement('div');
+        div.className = 'filter-item';
+        div.innerHTML = `<input type="checkbox" id="${sport.id}" checked> <label for="${sport.id}">${sport.name}</label>`;
+        filterEl.appendChild(div);
+
+        // Define the source URL for this sport
+        const sourceUrl = `${PROXY_URL}?sport=${encodeURIComponent(sport.name)}`;
+
+        // Add to calendar initially
+        calendar.addEventSource({
+            id: sport.id,
+            url: sourceUrl,
+            method: 'GET',
+            extraParams: { sport: sport.name },
+            backgroundColor: sport.color,
+            borderColor: sport.color
         });
 
-        calendar.render();
+        // Toggle logic
+        div.querySelector('input').addEventListener('change', function() {
+            if (this.checked) {
+                calendar.addEventSource({
+                    id: sport.id,
+                    url: sourceUrl,
+                    backgroundColor: sport.color,
+                    borderColor: sport.color
+                });
+            } else {
+                const source = calendar.getEventSourceById(sport.id);
+                if (source) source.remove();
+            }
+        });
     });
+
+    calendar.render();
+});
 </script>
 
 </body>
